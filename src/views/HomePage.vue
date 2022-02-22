@@ -1,6 +1,10 @@
 <script setup>
+import TravelList from "../components/TravelList.vue";
+components: {
+  TravelList
+}
 </script>
 
 <template>
-  <div>HomePage</div>
+  <TravelList></TravelList>
 </template>
