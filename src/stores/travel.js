@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-
+import axios from "axios";
 export const useTravelStore = defineStore({
   id: "travel",
   state: () => ({
@@ -32,6 +32,7 @@ export const useTravelStore = defineStore({
           intro: "當日簡介",
           location: [
             {
+              id: 1,
               cate: "風景",
               name: "test name",
               rate: 5, // 5 顆星
@@ -40,15 +41,15 @@ export const useTravelStore = defineStore({
               photos: [
                 {
                   id: 1,
-                  url: "https://picsum.photos/200/300"
+                  url: "https://picsum.photos/200/300",
                 },
                 {
                   id: 2,
-                  url: "https://picsum.photos/200/300"
+                  url: "https://picsum.photos/200/300",
                 },
                 {
                   id: 3,
-                  url: "https://picsum.photos/200/300"
+                  url: "https://picsum.photos/200/300",
                 },
               ],
               latlng: {
@@ -57,6 +58,7 @@ export const useTravelStore = defineStore({
               },
             },
             {
+              id: 2,
               cate: "餐廳",
               name: "test name 2",
               rate: 3, // 3 顆星
@@ -65,11 +67,11 @@ export const useTravelStore = defineStore({
               photos: [
                 {
                   id: 1,
-                  url: "https://picsum.photos/200/300"
+                  url: "https://picsum.photos/200/300",
                 },
                 {
                   id: 2,
-                  url: "https://picsum.photos/200/300"
+                  url: "https://picsum.photos/200/300",
                 },
               ],
               latlng: {
@@ -87,15 +89,37 @@ export const useTravelStore = defineStore({
   getters: {
     // doubleCount: (state) => state.counter * 2
     trip: (state) => {
-      return state.travel.trips.filter(trip => {
-        return trip.id === state.nowTripId
+      return state.travel.trips.filter((trip) => {
+        return trip.id === state.nowTripId;
         console.log(trip.id === state.nowTripId);
-      })[0]
-    }
+      })[0];
+    },
   },
   actions: {
-    // increment() {
-    //   this.counter++
-    // }
+    async getTravelListHandler() {
+      console.log("getTravelListHandler");
+      // const api = "/abc";
+      // try {
+      //   const result = await axios.get(api, payload);
+      //   if (result) {
+      //     // 更新列表
+      //     console.log("取得列表");
+      //   }
+      // } catch (err) {
+      //   console.log(err);
+      // }
+    },
+    async createTripHandler() {
+      console.log("createTripHandler");
+      // const api = "/abc";
+      // try {
+      //   const result = await axios.post(api, payload);
+      //   if (result) {
+      //     return true
+      //   }
+      // } catch (err) {
+      //   console.log(err);
+      // }
+    },
   },
 });

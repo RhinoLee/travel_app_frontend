@@ -19,7 +19,7 @@ const router = createRouter({
     //   component: () => import('../views/Trips.vue')
     // },
     {
-      path: '/trip/:tripId',
+      path: '/trips/:tripId',
       name: 'Trip',
       component: () => import('../views/Trip.vue')
     },
