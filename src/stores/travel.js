@@ -85,6 +85,7 @@ export const useTravelStore = defineStore({
     },
     nowTravelId: null,
     nowTripId: null,
+    addTravelName: "test",
   }),
   getters: {
     // doubleCount: (state) => state.counter * 2
@@ -98,28 +99,38 @@ export const useTravelStore = defineStore({
   actions: {
     async getTravelListHandler() {
       console.log("getTravelListHandler");
-      // const api = "/abc";
-      // try {
-      //   const result = await axios.get(api, payload);
-      //   if (result) {
-      //     // 更新列表
-      //     console.log("取得列表");
-      //   }
-      // } catch (err) {
-      //   console.log(err);
-      // }
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`;
+      try {
+        const result = await axios.get(api);
+        if (result.data.success && Array.isArray(result.data.travelList)) {
+          // 更新列表
+          console.log("取得列表", result);
+          this.travelList = result.data.travelList
+          return result
+        }
+      } catch (err) {
+        console.log(err);
+        return err
+      }
     },
     async createTripHandler() {
-      console.log("createTripHandler");
-      // const api = "/abc";
-      // try {
-      //   const result = await axios.post(api, payload);
-      //   if (result) {
-      //     return true
-      //   }
-      // } catch (err) {
-      //   console.log(err);
-      // }
+      // for test
+
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`;
+      const payload = {
+        name: this.addTravelName,
+        intro: "",
+        description: "",
+        start_date: null,
+        end_date: null,
+      }
+      try {
+        const result = await axios.post(api, payload);
+        return result.data.success
+      } catch (err) {
+        console.log(err);
+        return err
+      }
     },
   },
 });
