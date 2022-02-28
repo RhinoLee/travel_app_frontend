@@ -86,13 +86,14 @@ export const useTravelStore = defineStore({
     nowTravelId: null,
     nowTripId: null,
     addTravelName: "test",
+    addTravelTimeZone: "Asia/Taipei",
   }),
   getters: {
     // doubleCount: (state) => state.counter * 2
     trip: (state) => {
       return state.travel.trips.filter((trip) => {
-        return trip.id === state.nowTripId;
         console.log(trip.id === state.nowTripId);
+        return trip.id === state.nowTripId;
       })[0];
     },
   },
@@ -119,6 +120,7 @@ export const useTravelStore = defineStore({
       const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`;
       const payload = {
         name: this.addTravelName,
+        timezone: this.addTravelTimeZone,
         intro: "",
         description: "",
         start_date: null,
@@ -136,11 +138,9 @@ export const useTravelStore = defineStore({
     async deleteTravelHandler(travelId) {
       const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`
       const payload = { travelId }
-      console.log(payload);
       try {
         const result = await axios.delete(api, { data: payload }) 
         console.log("delete travel list", result);
-        return result
         return result
       } catch(err) {
         return err
