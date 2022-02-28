@@ -3,7 +3,7 @@ import { onMounted } from "vue"
 import { storeToRefs } from 'pinia'
 import { useTravelStore } from "@/stores/travel"
 import { useRouter } from "vue-router"
-import DatePickerWrap from "@/components/DatePickerWrap.vue"
+import AddTravel from "@/components/AddTravel.vue"
 
 const router = useRouter()
 const store = useTravelStore()
@@ -17,9 +17,8 @@ function gotoTravel(travelId) {
   })
 }
 
-async function createTrip() {
-  const result = await store.createTripHandler()
-  store.addTravelName = ""
+async function deleteTravel(travelId) {
+  const result = await store.deleteTravelHandler(travelId)
   if (result) {
     store.getTravelListHandler()
   }
@@ -32,24 +31,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="create">
-    <div>
-      <label for="tripName">旅程名稱：</label>
-      <input v-model="store.addTravelName" type="text" />
-    </div>
-    <div>
-      <label for="tripName">旅程時間：</label>
-      <DatePickerWrap></DatePickerWrap>
-    </div>
-    <button @click="createTrip">新增旅程</button>
-  </div>
+  <AddTravel></AddTravel>
   <table>
     <thead>
       <tr>
         <th>旅程</th>
         <th>開始時間</th>
         <th>結束時間</th>
-        <th>連結</th>
+        <th>動作</th>
       </tr>
     </thead>
     <tbody>
@@ -59,6 +48,8 @@ onMounted(() => {
         <td>{{ travel.end_date }}</td>
         <td>
           <a href="javascript:;" @click="gotoTravel(travel.id)">連結</a>
+          /
+          <a href="javascript:;" @click="deleteTravel(travel.id)">刪除</a>
         </td>
       </tr>
     </tbody>

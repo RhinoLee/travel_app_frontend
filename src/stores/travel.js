@@ -132,5 +132,19 @@ export const useTravelStore = defineStore({
         return err
       }
     },
+
+    async deleteTravelHandler(travelId) {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`
+      const payload = { travelId }
+      console.log(payload);
+      try {
+        const result = await axios.delete(api, { data: payload }) 
+        console.log("delete travel list", result);
+        return result
+        return result
+      } catch(err) {
+        return err
+      }
+    }
   },
 });
