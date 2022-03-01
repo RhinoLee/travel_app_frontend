@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useTimeZoneStore } from "@/stores/common/timezone";
 import axios from "axios";
 export const useTravelStore = defineStore({
   id: "travel",
@@ -87,6 +88,8 @@ export const useTravelStore = defineStore({
     nowTripId: null,
     addTravelName: "test",
     addTravelTimeZone: "Asia/Taipei",
+    addStartDate: "",
+    addEndDate: "",
   }),
   getters: {
     // doubleCount: (state) => state.counter * 2
@@ -96,6 +99,20 @@ export const useTravelStore = defineStore({
         return trip.id === state.nowTripId;
       })[0];
     },
+    dateOffset: (state) => {
+      const timeZoneStore = useTimeZoneStore()
+      const target = timeZoneStore.timeZoneList.filter(timeZone => timeZone.name === state.addTravelTimeZone)[0]
+      if (!target) return 
+      const offset = target.utc_offset.hours || 0
+      const startDate = new Date(state.addStartDate)
+      const endDate = new Date(state.addEndDate)
+      startDate.setHours(startDate.getHours() + offset * 1)
+      endDate.setHours(endDate.getHours() + offset * 1)
+      return {
+        startDate: startDate.toJSON(),
+        endDate: startDate.toJSON()
+      }
+    }
   },
   actions: {
     async getTravelListHandler() {
@@ -123,8 +140,8 @@ export const useTravelStore = defineStore({
         timezone: this.addTravelTimeZone,
         intro: "",
         description: "",
-        start_date: null,
-        end_date: null,
+        start_date: this.dateOffset.startDate,
+        end_date: this.dateOffset.endDate,
       }
       try {
         const result = await axios.post(api, payload);

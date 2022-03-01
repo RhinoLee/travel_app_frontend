@@ -8,6 +8,11 @@ const travelStore = useTravelStore()
 const timeZoneStore = useTimeZoneStore()
 const { timeZoneList } = storeToRefs(timeZoneStore)
 
+function updateDate({ startDate, endDate }) {
+  travelStore.addStartDate = startDate
+  travelStore.addEndDate = endDate
+}
+
 async function createTrip() {
   const result = await travelStore.createTripHandler()
   travelStore.addTravelName = ""
@@ -25,8 +30,8 @@ async function createTrip() {
       <input v-model="travelStore.addTravelName" type="text" />
     </div>
     <div>
-      <label for="tripDate">旅程時間：</label>
-      <DatePickerWrap></DatePickerWrap>
+      <label for="tripDate">當地旅程時間：</label>
+      <DatePickerWrap @updateDate="updateDate"></DatePickerWrap>
     </div>
     <div>
       <label for="timezone">旅程時區</label>
@@ -36,6 +41,4 @@ async function createTrip() {
     </div>
     <button @click="createTrip">新增旅程</button>
   </div>
-
-  <!-- <pre>{{ timeZoneList }}</pre> -->
 </template>
