@@ -104,13 +104,17 @@ export const useTravelStore = defineStore({
       const target = timeZoneStore.timeZoneList.filter(timeZone => timeZone.name === state.addTravelTimeZone)[0]
       if (!target) return 
       const offset = target.utc_offset.hours || 0
+      const localOffset = new Date(Date.now()).getTimezoneOffset() * 60000 / 1000 / 60 / 60 // 當地電腦時間與 UTC 的時差
       const startDate = new Date(state.addStartDate)
       const endDate = new Date(state.addEndDate)
-      startDate.setHours(startDate.getHours() + offset * 1)
-      endDate.setHours(endDate.getHours() + offset * 1)
+
+      // 先補 localOffset，再加上選擇的時區
+      startDate.setHours(startDate.getHours() + (-localOffset) + offset * 1)
+      endDate.setHours(endDate.getHours() + (-localOffset) + offset * 1)
+
       return {
-        startDate: startDate.toJSON(),
-        endDate: startDate.toJSON()
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
       }
     }
   },

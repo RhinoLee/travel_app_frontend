@@ -36,7 +36,7 @@ async function createTrip() {
     <div>
       <label for="timezone">旅程時區</label>
       <select name="timezone" id="timezone" v-model="travelStore.addTravelTimeZone">
-        <option v-for="timezone in timeZoneList" :value="timezone.name">{{ timezone.name }}</option>
+        <option v-for="timezone in timeZoneList" :value="timezone.name">{{ timezone.name  }}({{ timezone.utc_offset.hours || 0 }})</option>
       </select>
     </div>
     <button @click="createTrip">新增旅程</button>
