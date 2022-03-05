@@ -84,6 +84,7 @@ export const useTravelStore = defineStore({
         },
       ],
     },
+    nowTravel: {},
     nowTravelId: null,
     nowTripId: null,
     addTravelName: "test",
@@ -104,7 +105,7 @@ export const useTravelStore = defineStore({
       const target = timeZoneStore.timeZoneList.filter(timeZone => timeZone.name === state.addTravelTimeZone)[0]
       if (!target) return 
       const offset = target.utc_offset.hours || 0
-      const localOffset = new Date(Date.now()).getTimezoneOffset() * 60000 / 1000 / 60 / 60 // 當地電腦時間與 UTC 的時差
+      const localOffset = new Date(Date.now()).getTimezoneOffset() / 60 // 當地電腦時間與 UTC 的時差
       const startDate = new Date(state.addStartDate)
       const endDate = new Date(state.addEndDate)
 
@@ -116,6 +117,9 @@ export const useTravelStore = defineStore({
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString()
       }
+    },
+    daysList: (state) => {
+      
     }
   },
   actions: {
@@ -128,6 +132,21 @@ export const useTravelStore = defineStore({
           // 更新列表
           console.log("取得列表", result);
           this.travelList = result.data.travelList
+          return result
+        }
+      } catch (err) {
+        console.log(err);
+        return err
+      }
+    },
+    async getTravelHandler() {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel/${this.nowTravelId}`;
+      try {
+        const result = await axios.get(api);
+        if (result.data.success && result.data.travel) {
+          // 更新列表
+          console.log("取得列表", result);
+          this.nowTravel = result.data.travel
           return result
         }
       } catch (err) {

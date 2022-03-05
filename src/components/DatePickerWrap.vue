@@ -20,7 +20,6 @@ watch(date, val => {
     endDate: date.value[1]
   }
   emit("updateDate", dateRange)
-  // getUTCTime(date.value)
 }, { immediate: true })
 
 onMounted(() => {
@@ -29,17 +28,8 @@ onMounted(() => {
   date.value = [startDate, endDate];
 })
 
-function getUTCTime(dateRange) {
-  let startDate = new Date(dateRange[0]).toUTCString()
-  let endDate = new Date(dateRange[1]).toUTCString()
-  startDate = new Date(startDate).toJSON();
-  endDate = new Date(endDate).toJSON();
-  emit("updateDate", { startDate, endDate })
-}
-
 </script>
 
 <template>
   <Datepicker v-model="date" range></Datepicker>
-  <pre>{{ dateOffset }}</pre>
 </template>
