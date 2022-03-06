@@ -118,9 +118,6 @@ export const useTravelStore = defineStore({
         endDate: endDate.toISOString()
       }
     },
-    daysList: (state) => {
-      
-    }
   },
   actions: {
     async getTravelListHandler() {
