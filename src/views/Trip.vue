@@ -3,7 +3,7 @@ import { onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { useTravelStore } from '@/stores/travel'
 import { storeToRefs } from 'pinia'
-import Map from "@/components/Map.vue"
+import Map from "@/components/common/Map.vue"
 
 const route = useRoute()
 const store = useTravelStore()

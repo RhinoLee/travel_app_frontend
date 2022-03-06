@@ -13,15 +13,15 @@ const router = createRouter({
       name: "Trips",
       component: () => import('../views/Trips.vue'),
     },
-    // {
-    //   path: '/trips',
-    //   name: 'Trips',
-    //   component: () => import('../views/Trips.vue')
-    // },
     {
       path: '/trips/:tripId',
       name: 'Trip',
       component: () => import('../views/Trip.vue')
+    },
+    {
+      path: '/locationCollect',
+      name: 'LocationCollect',
+      component: () => import('../views/LocationCollect.vue')
     },
   ]
 })

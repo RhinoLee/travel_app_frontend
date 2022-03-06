@@ -1,15 +1,26 @@
 <script setup>
 import "leaflet/dist/leaflet.css"
-import { onMounted, reactive, defineProps } from "vue"
+import { onMounted, reactive, defineProps, watch } from "vue"
 import L from 'leaflet'
 
 const props = defineProps({
   location: {
     type: Array,
     default: () => ([])
+  },
+  suggestList: {
+    type: Array,
+    default: () => ([])
   }
 })
 const travelMap = reactive({ map: {} })
+const markerGroup = reactive({ suggestMarkerGroup: {} })
+
+watch(() => props.suggestList, val => {
+  console.log(val);
+  if (!val) return
+  suggestMarkHandler()
+}, { deep: true })
 
 // 圖資設定
 const layersControl = {
@@ -76,6 +87,27 @@ function markHandler() {
   })
 }
 
+// 建議點位插點
+function suggestMarkHandler() {
+  console.log("suggestMarkHandler", props.suggestList);
+  removeAllMarker()
+  if (!props.suggestList || props.suggestList.length === 0) return
+  let group = []
+  props.suggestList.forEach(suggest => {
+    // console.log(suggest.position.lat, suggest.position.lng);
+    if (suggest.position) {
+      const marker = L.marker([suggest.position.lat, suggest.position.lng])
+      const popupContent = popupHandler({ name: suggest.title, cate: suggest.resultType })
+      marker.markerId = suggest.id
+      marker.bindPopup(popupContent)
+      group.push(marker)
+    }
+  })
+
+  markerGroup.suggestMarkerGroup = L.featureGroup(group)
+  markerGroup.suggestMarkerGroup.addTo(travelMap.map)
+}
+
 // 地圖點位 popup 內容設置
 function popupHandler({ name, cate, rate }) {
   const popupContent = `
@@ -87,6 +119,11 @@ function popupHandler({ name, cate, rate }) {
   `
 
   return popupContent
+}
+
+// 移除所有地圖點位
+function removeAllMarker() {
+  travelMap.map.removeLayer(markerGroup.suggestMarkerGroup)
 }
 
 

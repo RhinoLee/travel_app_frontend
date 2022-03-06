@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useTravelStore } from "@/stores/travel"
 import { useTimeZoneStore } from "@/stores/common/timezone"
-import DatePickerWrap from "@/components/DatePickerWrap.vue"
+import DatePickerWrap from "@/components/common/DatePickerWrap.vue"
 
 const travelStore = useTravelStore()
 const timeZoneStore = useTimeZoneStore()
