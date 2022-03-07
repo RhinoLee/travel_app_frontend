@@ -1,6 +1,6 @@
 <script setup>
 import "leaflet/dist/leaflet.css"
-import { onMounted, reactive, defineProps, watch } from "vue"
+import { onMounted, reactive, defineProps, watch, toRef } from "vue"
 import L from 'leaflet'
 
 const props = defineProps({
@@ -11,16 +11,26 @@ const props = defineProps({
   suggestList: {
     type: Array,
     default: () => ([])
-  }
+  },
+  focusSuggest: {
+    type: String,
+    default: "",
+  },
 })
 const travelMap = reactive({ map: {} })
 const markerGroup = reactive({ suggestMarkerGroup: {} })
+const focusSuggest = toRef(props, 'focusSuggest')
 
 watch(() => props.suggestList, val => {
-  console.log(val);
   if (!val) return
   suggestMarkHandler()
-}, { deep: true })
+})
+
+watch(focusSuggest, val => {
+  console.log("props.focusSuggest", val);
+  if (!val) return
+  focusMarkerHandler(val)
+})
 
 // 圖資設定
 const layersControl = {
@@ -80,7 +90,7 @@ function markHandler() {
   if (!props.location || props.location.length === 0) return
   props.location.forEach(location => {
     const marker = L.marker(location.latlng)
-    const popupContent = popupHandler({ name: location.name, cate: location.cate, rate: location.rate })
+    const popupContent = popupHandler({ name: location.name, cate: location.cate })
     marker.markerId = location.id
     marker.bindPopup(popupContent)
     marker.addTo(travelMap.map)
@@ -89,7 +99,6 @@ function markHandler() {
 
 // 建議點位插點
 function suggestMarkHandler() {
-  console.log("suggestMarkHandler", props.suggestList);
   removeAllMarker()
   if (!props.suggestList || props.suggestList.length === 0) return
   let group = []
@@ -97,7 +106,20 @@ function suggestMarkHandler() {
     // console.log(suggest.position.lat, suggest.position.lng);
     if (suggest.position) {
       const marker = L.marker([suggest.position.lat, suggest.position.lng])
-      const popupContent = popupHandler({ name: suggest.title, cate: suggest.resultType })
+      const categories = []
+      if (suggest.categories) {
+        suggest.categories.forEach(category => {
+          categories.push(category.name)
+        })
+      }
+      const popupContent = popupHandler(
+        { 
+          name: suggest.title, 
+          cate: suggest.resultType, 
+          address: suggest.address.label,
+          categories: categories.join()
+        }
+      )
       marker.markerId = suggest.id
       marker.bindPopup(popupContent)
       group.push(marker)
@@ -109,16 +131,26 @@ function suggestMarkHandler() {
 }
 
 // 地圖點位 popup 內容設置
-function popupHandler({ name, cate, rate }) {
+function popupHandler({ name, cate, address, categories }) {
   const popupContent = `
   <div>
     <p>名稱：${name}</p>
-    <p>分類：${cate}</p>
-    <p>評價：${rate}</p>
+    <p>分類：${categories}</p>
+    <p>地址：${address}</p>
   </div>
   `
 
   return popupContent
+}
+
+// 指定建議點位 popup
+function focusMarkerHandler(markerId) {
+  const layerGroup = markerGroup.suggestMarkerGroup ._layers
+  Object.keys(layerGroup).forEach(layer => {
+    if (layerGroup[layer].markerId === markerId) {
+      layerGroup[layer].openPopup()
+    }
+  })
 }
 
 // 移除所有地圖點位

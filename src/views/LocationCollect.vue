@@ -5,18 +5,19 @@ import axios from "axios"
 
 const searchText = ref("")
 const suggestList = reactive({ data: [] })
+const focusSuggest = ref("")
 
-watch(searchText, val => {
-  // if (!val) return
-  getSuggestLocation()
-})
+// watch(searchText, val => {
+//   // if (!val) return
+//   getSuggestLocation()
+// })
 
 async function getSuggestLocation() {
   if (!searchText.value) {
     suggestList.data = []
-    return 
+    return
   }
-  const api = `https://autosuggest.search.hereapi.com/v1/autosuggest?at=23.97565,120.97388&limit=20&lang=zh-TW&q=${searchText.value}&apikey=${import.meta.env.VITE_HERE_API_KEY}`
+  const api = `https://autosuggest.search.hereapi.com/v1/autosuggest?at=23.97565,120.97388&in=countryCode:TWN&limit=20&lang=zh-TW&q=${searchText.value}&apikey=${import.meta.env.VITE_HERE_API_KEY}`
   try {
     const result = await axios.get(api)
     if (result && Array.isArray(result.data.items)) {
@@ -29,23 +30,39 @@ async function getSuggestLocation() {
 
 }
 
+function focusSuggestHandler(suggestId) {
+  focusSuggest.value = suggestId
+  // console.log(focusSuggest.value);
+}
+
 </script>
 
 <template>
   <div class="container">
-    <Map :suggestList="suggestList.data"></Map>
+    <Map :suggestList="suggestList.data" :focusSuggest="focusSuggest"></Map>
     <div class="input-group">
-      <input type="text" placeholder="請輸入關鍵字或地址" v-model.trim="searchText" @keyup.enter="getSuggestLocation" />
+      <input
+        type="text"
+        placeholder="請輸入關鍵字或地址"
+        v-model.trim="searchText"
+        @keyup.enter="getSuggestLocation"
+      />
       <button type="button" @click="getSuggestLocation">查詢</button>
       <ul>
-        <li v-for="suggest in suggestList.data" :key="suggest.id">{{ suggest.title }}</li>
-        <!-- <pre>{{ suggestList.data }}</pre> -->
+        <li
+          v-for="suggest in suggestList.data"
+          :key="suggest.id"
+          @click="focusSuggestHandler(suggest.id)"
+        >{{ suggest.title }}</li>
       </ul>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+li {
+  cursor: pointer;
+}
 .container {
   position: relative;
   width: 100%;
