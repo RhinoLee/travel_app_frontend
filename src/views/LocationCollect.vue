@@ -6,7 +6,7 @@ import { useLocationStore } from "@/stores/location"
 import { storeToRefs } from "pinia"
 
 const locationStore = useLocationStore()
-const { searchText, suggestList, focusSuggestId } = storeToRefs(locationStore)
+const { searchText, suggestList, focusSuggestId, locationList, suggestWithoutCollect } = storeToRefs(locationStore)
 
 async function getSuggestLocation() {
   locationStore.getSuggestLocation()
@@ -37,7 +37,8 @@ onMounted(() => {
       @collectLocationHandler="collectLocationHandler"
       @removetLocationHandler="removetLocationHandler"
       :focusSuggestId="focusSuggestId"
-      :suggestList="suggestList"
+      :suggestList="suggestWithoutCollect"
+      :locationList="locationList"
     ></Map>
     <div class="input-group">
       <input
@@ -49,7 +50,7 @@ onMounted(() => {
       <button type="button" @click="getSuggestLocation">查詢</button>
       <ul>
         <li
-          v-for="suggest in suggestList"
+          v-for="suggest in suggestWithoutCollect"
           :key="suggest.id"
           @click="focusSuggestHandler(suggest)"
         >{{ suggest.title }}</li>

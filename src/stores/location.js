@@ -5,6 +5,7 @@ export const useLocationStore = defineStore({
   state: () => ({
     searchText: "",
     suggestList: [],
+    locationList: [],
     focusSuggestId: "",
     nowLocation: {
       name: "",
@@ -15,6 +16,21 @@ export const useLocationStore = defineStore({
     },
   }),
   getters: {
+    suggestWithoutCollect: (state) => {
+      const newSuggestList = JSON.parse(JSON.stringify(state.suggestList))
+      state.locationList.forEach(location => {
+        const targetIndex = newSuggestList.findIndex(suggest => {
+          return location.lat === suggest.position.lat && location.lng === suggest.position.lng
+        })
+        console.log("targetIndex", targetIndex);
+        if (targetIndex >= 0) {
+          newSuggestList[targetIndex].hasExisted = true
+          newSuggestList[targetIndex].id = location.id
+        }
+      })
+
+      return newSuggestList
+    }
   },
   actions: {
     async getSuggestLocation() {
@@ -37,6 +53,7 @@ export const useLocationStore = defineStore({
       const api = `${import.meta.env.VITE_BACKEND_HOST}/location`;
       try {
         const result = await axios.get(api);
+        this.locationList = result.data.locationList
         return result.data.success
       } catch (err) {
         console.log(err);

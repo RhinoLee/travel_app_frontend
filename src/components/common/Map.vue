@@ -13,18 +13,27 @@ const props = defineProps({
     type: Array,
     default: () => ([])
   },
+  locationList: {
+    type: Array,
+    default: () => ([])
+  },
   focusSuggestId: {
     type: String,
     default: "",
   },
 })
 const travelMap = reactive({ map: {} })
-const markerGroup = reactive({ suggestMarkerGroup: {} })
+const markerGroup = reactive({ suggestMarkerGroup: {}, locationMarkerGroup: {} })
 const focusSuggestId = toRef(props, 'focusSuggestId')
 
 watch(() => props.suggestList, val => {
   if (!val) return
   suggestMarkHandler()
+})
+
+watch(() => props.locationList, val => {
+  if (!val) return
+  locationMarkerHandler()
 })
 
 watch(focusSuggestId, val => {
@@ -99,12 +108,13 @@ function markHandler() {
 
 // 建議點位插點
 function suggestMarkHandler() {
-  removeAllMarker()
+  removeSuggestMarker()
   if (!props.suggestList || props.suggestList.length === 0) return
   let group = []
+  // 待實作： 跟 locationList 比對，座標不一樣才插點
   props.suggestList.forEach(suggest => {
     // console.log(suggest.position.lat, suggest.position.lng);
-    if (suggest.position) {
+    if (suggest.position && !suggest.hasExisted) {
       const marker = L.marker([suggest.position.lat, suggest.position.lng])
       const categories = []
       if (suggest.categories) {
@@ -113,16 +123,17 @@ function suggestMarkHandler() {
         })
       }
       // 設定 popup 內容
-      const container = createPopupContent( {
+      const container = createPopupContent({
         name: suggest.title,
         address: suggest.address.label,
-        categories: categories.join()
+        categories: categories.join(),
+        addBtn: true
       });
       const popup = L.popup();
       popup.setContent(container)
       marker.markerId = suggest.id
       marker.bindPopup(popup)
-      marker.on("click", function() {
+      marker.on("click", function () {
         emit("focusSuggestHandler", suggest)
       })
       // marker.bindPopup(popupContent)
@@ -132,6 +143,40 @@ function suggestMarkHandler() {
 
   markerGroup.suggestMarkerGroup = L.featureGroup(group)
   markerGroup.suggestMarkerGroup.addTo(travelMap.map)
+}
+
+// 收藏點位插點
+function locationMarkerHandler() {
+  // removeAllMarker()
+  if (!props.locationList || props.locationList.length === 0) return
+  let group = []
+  const greenIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  });
+  props.locationList.forEach(location => {
+    // const marker = L.marker([location.lat, location.lng])
+    const marker = L.marker([location.lat, location.lng], { icon: greenIcon })
+    // 設定 popup 內容
+    const container = createPopupContent({
+      name: location.name,
+      address: location.address,
+      categories: location.category,
+      addBtn: false
+    });
+    const popup = L.popup();
+    popup.setContent(container)
+    marker.markerId = location.id
+    marker.bindPopup(popup)
+    // marker.on("click", function() {
+    //   emit("focusLocationHandler", location)
+    // })
+
+    // marker.bindPopup(popupContent)
+    group.push(marker)
+  })
+
+  markerGroup.locationMarkerGroup = L.featureGroup(group)
+  markerGroup.locationMarkerGroup.addTo(travelMap.map)
 }
 
 // 地圖點位 popup 內容設置
@@ -148,7 +193,7 @@ function popupHandler({ name, address, categories }) {
   return popupContent
 }
 
-function createPopupContent({ name, address, categories }) {
+function createPopupContent({ name, address, categories, addBtn }) {
   // create container
   let container = L.DomUtil.create("div", "location-pop");
   // searchName
@@ -162,46 +207,58 @@ function createPopupContent({ name, address, categories }) {
   categoriesDOM.innerHTML = `<div>分類：${categories}</div>`;
   // create btn container
   let btnContainer = L.DomUtil.create("div", "pop-btn-wrap", container);
-  // 新增參考按鈕
-  let addFavorButton = L.DomUtil.create(
-    "button",
-    "addFavorButton",
-    btnContainer
-  );
-  addFavorButton.innerHTML = `<i><img src="assets/img/icon/plusb_blue.png" /></i><span>加入收藏</span>`;
-  // 移除參考按鈕
-  let removeFavorButton = L.DomUtil.create(
-    "button",
-    "removeFavorButton",
-    btnContainer
-  );
-  removeFavorButton.innerHTML = `<i><img src="assets/img/icon/cancel_red.png" /></i><span>移除收藏</span>`;
+  
+  if (addBtn) {
+    // 新增參考按鈕
+    let addFavorButton = L.DomUtil.create(
+      "button",
+      "addFavorButton",
+      btnContainer
+    );
+    addFavorButton.innerHTML = `<i><img src="assets/img/icon/plusb_blue.png" /></i><span>加入收藏</span>`;
 
-  // 綁定按鈕事件
-  L.DomEvent.on(addFavorButton, "click", (e) => {
-    console.log("addFavorButton trigger");
-    emit("collectLocationHandler")
-  });
-  L.DomEvent.on(removeFavorButton, "click", (e) => {
-    console.log("removeFavorButton trigger");
-    emit("removetLocationHandler")
-  });
+    // 綁定按鈕事件
+    L.DomEvent.on(addFavorButton, "click", (e) => {
+      console.log("addFavorButton trigger");
+      emit("collectLocationHandler")
+    });
+  } else {
+    // 移除參考按鈕
+    let removeFavorButton = L.DomUtil.create(
+      "button",
+      "removeFavorButton",
+      btnContainer
+    );
+    removeFavorButton.innerHTML = `<i><img src="assets/img/icon/cancel_red.png" /></i><span>移除收藏</span>`;
 
+    // 綁定按鈕事件
+    L.DomEvent.on(removeFavorButton, "click", (e) => {
+      console.log("removeFavorButton trigger");
+      emit("removetLocationHandler")
+    });
+  }
+  
   return container;
 }
 
-// 指定建議點位 popup
+// 指定建議、收藏點位 popup
 function focusMarkerHandler(markerId) {
-  const layerGroup = markerGroup.suggestMarkerGroup._layers
-  Object.keys(layerGroup).forEach(layer => {
-    if (layerGroup[layer].markerId === markerId) {
-      layerGroup[layer].openPopup()
+  const suggestMarkerGroup = markerGroup.suggestMarkerGroup._layers
+  const locationMarkerGroup = markerGroup.locationMarkerGroup._layers
+  Object.keys(suggestMarkerGroup).forEach(layer => {
+    if (suggestMarkerGroup[layer].markerId === markerId) {
+      suggestMarkerGroup[layer].openPopup()
+    }
+  })
+  Object.keys(locationMarkerGroup).forEach(layer => {
+    if (locationMarkerGroup[layer].markerId === markerId) {
+      locationMarkerGroup[layer].openPopup()
     }
   })
 }
 
 // 移除所有地圖點位
-function removeAllMarker() {
+function removeSuggestMarker() {
   travelMap.map.removeLayer(markerGroup.suggestMarkerGroup)
 }
 
