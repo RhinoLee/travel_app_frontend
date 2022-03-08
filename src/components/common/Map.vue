@@ -13,21 +13,21 @@ const props = defineProps({
     type: Array,
     default: () => ([])
   },
-  focusSuggest: {
+  focusSuggestId: {
     type: String,
     default: "",
   },
 })
 const travelMap = reactive({ map: {} })
 const markerGroup = reactive({ suggestMarkerGroup: {} })
-const focusSuggest = toRef(props, 'focusSuggest')
+const focusSuggestId = toRef(props, 'focusSuggestId')
 
 watch(() => props.suggestList, val => {
   if (!val) return
   suggestMarkHandler()
 })
 
-watch(focusSuggest, val => {
+watch(focusSuggestId, val => {
   if (!val) return
   focusMarkerHandler(val)
 })
