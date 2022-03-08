@@ -20,9 +20,12 @@ function collectLocationHandler() {
   locationStore.collectLocationHandler()
 }
 
-// function removeLocationHandler() {
-//   locationStore.removeLocationHandler()
-// }
+async function removeLocationHandler(locationId) {
+  const result = await locationStore.removeLocationHandler(locationId)
+  if (result) {
+    locationStore.getAllLocationHandler()
+  }
+}
 
 onMounted(() => {
   locationStore.getAllLocationHandler()
@@ -35,7 +38,7 @@ onMounted(() => {
     <Map
       @focusSuggestHandler="focusSuggestHandler"
       @collectLocationHandler="collectLocationHandler"
-      @removetLocationHandler="removetLocationHandler"
+      @removeLocationHandler="removeLocationHandler"
       :focusSuggestId="focusSuggestId"
       :suggestList="suggestWithoutCollect"
       :locationList="locationList"

@@ -84,18 +84,18 @@ export const useLocationStore = defineStore({
         })
       }
       this.nowLocation.category = categories.join()
-    }
-    // async removeLocationHandler() {
-    //   // for test
-    //   const api = `${import.meta.env.VITE_BACKEND_HOST}/location`;
-    //   const payload = this.nowLocationId
-    //   try {
-    //     const result = await axios.delete(api, payload);
-    //     return result.data.success
-    //   } catch (err) {
-    //     console.log(err);
-    //     return err
-    //   }
-    // },
+    },
+    async removeLocationHandler(locationId) {
+      // for test
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/location`;
+      const payload = { locationId }
+      try {
+        const result = await axios.delete(api, {data: payload});
+        return result.data.success
+      } catch (err) {
+        console.log(err);
+        return err
+      }
+    },
   },
 });

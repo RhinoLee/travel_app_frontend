@@ -124,6 +124,7 @@ function suggestMarkHandler() {
       }
       // 設定 popup 內容
       const container = createPopupContent({
+        locationId: suggest.id,
         name: suggest.title,
         address: suggest.address.label,
         categories: categories.join(),
@@ -147,7 +148,7 @@ function suggestMarkHandler() {
 
 // 收藏點位插點
 function locationMarkerHandler() {
-  // removeAllMarker()
+  removeLocationMarker()
   if (!props.locationList || props.locationList.length === 0) return
   let group = []
   const greenIcon = new L.Icon({
@@ -158,6 +159,7 @@ function locationMarkerHandler() {
     const marker = L.marker([location.lat, location.lng], { icon: greenIcon })
     // 設定 popup 內容
     const container = createPopupContent({
+      locationId: location.id,
       name: location.name,
       address: location.address,
       categories: location.category,
@@ -193,7 +195,7 @@ function popupHandler({ name, address, categories }) {
   return popupContent
 }
 
-function createPopupContent({ name, address, categories, addBtn }) {
+function createPopupContent({ locationId, name, address, categories, addBtn }) {
   // create container
   let container = L.DomUtil.create("div", "location-pop");
   // searchName
@@ -207,7 +209,7 @@ function createPopupContent({ name, address, categories, addBtn }) {
   categoriesDOM.innerHTML = `<div>分類：${categories}</div>`;
   // create btn container
   let btnContainer = L.DomUtil.create("div", "pop-btn-wrap", container);
-  
+
   if (addBtn) {
     // 新增參考按鈕
     let addFavorButton = L.DomUtil.create(
@@ -234,7 +236,7 @@ function createPopupContent({ name, address, categories, addBtn }) {
     // 綁定按鈕事件
     L.DomEvent.on(removeFavorButton, "click", (e) => {
       console.log("removeFavorButton trigger");
-      emit("removetLocationHandler")
+      emit("removeLocationHandler", locationId)
     });
   }
   
@@ -257,9 +259,14 @@ function focusMarkerHandler(markerId) {
   })
 }
 
-// 移除所有地圖點位
+// 移除所有建議點位
 function removeSuggestMarker() {
   travelMap.map.removeLayer(markerGroup.suggestMarkerGroup)
+}
+
+// 移除所有收藏點位
+function removeLocationMarker() {
+  travelMap.map.removeLayer(markerGroup.locationMarkerGroup)
 }
 
 
