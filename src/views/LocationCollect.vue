@@ -1,16 +1,13 @@
 <script setup>
 import Map from "@/components/common/Map.vue"
-import { onMounted, reactive, ref, watch } from "@vue/runtime-core"
+import { onMounted, reactive, ref } from "@vue/runtime-core"
 import axios from "axios"
+import { useLocationStore } from "@/stores/location"
 
 const searchText = ref("")
 const suggestList = reactive({ data: [] })
 const focusSuggest = ref("")
-
-// watch(searchText, val => {
-//   // if (!val) return
-//   getSuggestLocation()
-// })
+const locationStore = useLocationStore()
 
 async function getSuggestLocation() {
   if (!searchText.value) {
@@ -30,16 +27,41 @@ async function getSuggestLocation() {
 
 }
 
-function focusSuggestHandler(suggestId) {
-  focusSuggest.value = suggestId
-  // console.log(focusSuggest.value);
+function focusSuggestHandler(suggest) {
+  focusSuggest.value = suggest.id
+
+  locationStore.nowLocation.name = suggest.title
+  locationStore.nowLocation.address = suggest.address.label
+  locationStore.nowLocation.lat = suggest.position.lat
+  locationStore.nowLocation.lng = suggest.position.lng
+  const categories = []
+  if (suggest.categories) {
+    suggest.categories.forEach(category => {
+      categories.push(category.name)
+    })
+  }
+  locationStore.nowLocation.category = categories.join()
+}
+
+function collectLocationHandler() {
+  locationStore.collectLocationHandler()
+}
+
+function removeLocationHandler() {
+  locationStore.removeLocationHandler()
 }
 
 </script>
 
 <template>
   <div class="container">
-    <Map :suggestList="suggestList.data" :focusSuggest="focusSuggest"></Map>
+    <Map
+      @focusSuggestHandler="focusSuggestHandler"
+      @collectLocationHandler="collectLocationHandler"
+      @removetLocationHandler="removetLocationHandler"
+      :suggestList="suggestList.data"
+      :focusSuggest="focusSuggest"
+    ></Map>
     <div class="input-group">
       <input
         type="text"
@@ -52,7 +74,7 @@ function focusSuggestHandler(suggestId) {
         <li
           v-for="suggest in suggestList.data"
           :key="suggest.id"
-          @click="focusSuggestHandler(suggest.id)"
+          @click="focusSuggestHandler(suggest)"
         >{{ suggest.title }}</li>
       </ul>
     </div>
@@ -71,7 +93,7 @@ li {
 .input-group {
   position: absolute;
   top: 30px;
-  left: 30px;
+  left: 50px;
   z-index: 1000;
   input {
     height: 10px;

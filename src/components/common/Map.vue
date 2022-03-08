@@ -1,8 +1,9 @@
 <script setup>
 import "leaflet/dist/leaflet.css"
-import { onMounted, reactive, defineProps, watch, toRef } from "vue"
+import { onMounted, reactive, defineProps, defineEmits, watch, toRef } from "vue"
 import L from 'leaflet'
 
+const emit = defineEmits(["focusSuggestHandler", "createLocation", "removeLocation"])
 const props = defineProps({
   location: {
     type: Array,
@@ -27,7 +28,6 @@ watch(() => props.suggestList, val => {
 })
 
 watch(focusSuggest, val => {
-  console.log("props.focusSuggest", val);
   if (!val) return
   focusMarkerHandler(val)
 })
@@ -40,7 +40,7 @@ const layersControl = {
       "<a href='https://www.tgos.tw/tgos/web/tgos_home.aspx' target='_blank'>&copy; TGOS</a>",
   },
   osm: {
-    url: "https://tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=MRUta8GHrZMhzZCVkTauX9mlsxxe99bzNrdahFi7daqJJl0rr9CxTBEhrma8prTe",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution:
       "<a href='https://www.openstreetmap.org' target='_blank'>&copy; OpenStreetMap</a>",
   },
@@ -65,7 +65,7 @@ const mapControl = {
   fullscreenControl: true,
   center: [23.97565, 120.97388],
   zoom: 8,
-  zoomControl: false,
+  zoomControl: true,
 }
 
 // 初始化地圖
@@ -112,16 +112,20 @@ function suggestMarkHandler() {
           categories.push(category.name)
         })
       }
-      const popupContent = popupHandler(
-        { 
-          name: suggest.title, 
-          cate: suggest.resultType, 
-          address: suggest.address.label,
-          categories: categories.join()
-        }
-      )
+      // 設定 popup 內容
+      const container = createPopupContent( {
+        name: suggest.title,
+        address: suggest.address.label,
+        categories: categories.join()
+      });
+      const popup = L.popup();
+      popup.setContent(container)
       marker.markerId = suggest.id
-      marker.bindPopup(popupContent)
+      marker.bindPopup(popup)
+      marker.on("click", function() {
+        emit("focusSuggestHandler", suggest)
+      })
+      // marker.bindPopup(popupContent)
       group.push(marker)
     }
   })
@@ -131,7 +135,8 @@ function suggestMarkHandler() {
 }
 
 // 地圖點位 popup 內容設置
-function popupHandler({ name, cate, address, categories }) {
+function popupHandler({ name, address, categories }) {
+
   const popupContent = `
   <div>
     <p>名稱：${name}</p>
@@ -143,9 +148,51 @@ function popupHandler({ name, cate, address, categories }) {
   return popupContent
 }
 
+function createPopupContent({ name, address, categories }) {
+  // create container
+  let container = L.DomUtil.create("div", "location-pop");
+  // searchName
+  let titleDOM = L.DomUtil.create("div", "title", container);
+  titleDOM.innerText = name;
+  // 地址
+  let addressDOM = L.DomUtil.create("div", "address", container);
+  addressDOM.innerHTML = `<div>地址：${address}</div>`;
+  // 分類
+  let categoriesDOM = L.DomUtil.create("div", "categories", container);
+  categoriesDOM.innerHTML = `<div>分類：${categories}</div>`;
+  // create btn container
+  let btnContainer = L.DomUtil.create("div", "pop-btn-wrap", container);
+  // 新增參考按鈕
+  let addFavorButton = L.DomUtil.create(
+    "button",
+    "addFavorButton",
+    btnContainer
+  );
+  addFavorButton.innerHTML = `<i><img src="assets/img/icon/plusb_blue.png" /></i><span>加入收藏</span>`;
+  // 移除參考按鈕
+  let removeFavorButton = L.DomUtil.create(
+    "button",
+    "removeFavorButton",
+    btnContainer
+  );
+  removeFavorButton.innerHTML = `<i><img src="assets/img/icon/cancel_red.png" /></i><span>移除收藏</span>`;
+
+  // 綁定按鈕事件
+  L.DomEvent.on(addFavorButton, "click", (e) => {
+    console.log("addFavorButton trigger");
+    emit("collectLocationHandler")
+  });
+  L.DomEvent.on(removeFavorButton, "click", (e) => {
+    console.log("removeFavorButton trigger");
+    emit("removetLocationHandler")
+  });
+
+  return container;
+}
+
 // 指定建議點位 popup
 function focusMarkerHandler(markerId) {
-  const layerGroup = markerGroup.suggestMarkerGroup ._layers
+  const layerGroup = markerGroup.suggestMarkerGroup._layers
   Object.keys(layerGroup).forEach(layer => {
     if (layerGroup[layer].markerId === markerId) {
       layerGroup[layer].openPopup()
