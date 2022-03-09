@@ -4,14 +4,17 @@ import { useTravelStore } from "@/stores/travel"
 import { useTimeZoneStore } from "@/stores/common/timezone"
 import DatePickerWrap from "@/components/common/DatePickerWrap.vue"
 import TimezoneSelect from "@/components/common/TimezoneSelect.vue"
+import { useTimeTransfer } from "@/tools/time-transfer"
 
 const travelStore = useTravelStore()
 const timeZoneStore = useTimeZoneStore()
 const { timeZoneList } = storeToRefs(timeZoneStore)
+const { addTravelTimeZone } = storeToRefs(travelStore)
 
 function updateDate({ startDate, endDate }) {
-  travelStore.addStartDate = startDate
-  travelStore.addEndDate = endDate
+  const { startDateResult, endDateResult } = useTimeTransfer({ startDate, endDate, nowTimeZone:addTravelTimeZone,  timeZoneList })
+  travelStore.addStartDate = startDateResult
+  travelStore.addEndDate = endDateResult
 }
 
 function changeTimeZone(timezone) {
@@ -49,8 +52,8 @@ async function createTrip() {
         >{{ timezone.name }}({{ timezone.utc_offset.hours || 0 }})</option>
       </select> -->
     </div>
-    <pre v-if="travelStore.dateOffset">{{ travelStore.dateOffset.startDate }}</pre>
-    <pre v-if="travelStore.dateOffset">{{ travelStore.dateOffset.endDate }}</pre>
+    <pre v-if="travelStore.addStartDate">{{ travelStore.addStartDate }}</pre>
+    <pre v-if="travelStore.addEndDate">{{ travelStore.addEndDate }}</pre>
     <button @click="createTrip">新增旅程</button>
   </div>
 </template>
