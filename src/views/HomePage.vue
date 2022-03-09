@@ -6,6 +6,7 @@ import TravelList from "../components/TravelList.vue";
 const timeZoneStore = useTimeZoneStore()
 
 onMounted(() => {
+  if (timeZoneStore.timeZoneList.length > 0) return
   timeZoneStore.getTimeZoneListHandler()
 })
 </script>

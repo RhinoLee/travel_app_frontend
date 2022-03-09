@@ -88,7 +88,7 @@ export const useTravelStore = defineStore({
     nowTravelId: null,
     nowTripId: null,
     addTravelName: "test",
-    addTravelTimeZone: "Asia/Taipei",
+    addTravelTimeZone: "",
     addStartDate: "",
     addEndDate: "",
   }),
@@ -101,6 +101,7 @@ export const useTravelStore = defineStore({
       })[0];
     },
     dateOffset: (state) => {
+      if (!state.addStartDate || !state.addEndDate) return
       const timeZoneStore = useTimeZoneStore()
       const target = timeZoneStore.timeZoneList.filter(timeZone => timeZone.name === state.addTravelTimeZone)[0]
       if (!target) return 
@@ -112,7 +113,6 @@ export const useTravelStore = defineStore({
       // 先補 localOffset，再加上選擇的時區
       startDate.setHours(startDate.getHours() + (-localOffset) + offset * 1)
       endDate.setHours(endDate.getHours() + (-localOffset) + offset * 1)
-
       return {
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString()

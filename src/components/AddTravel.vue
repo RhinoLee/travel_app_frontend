@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useTravelStore } from "@/stores/travel"
 import { useTimeZoneStore } from "@/stores/common/timezone"
 import DatePickerWrap from "@/components/common/DatePickerWrap.vue"
+import TimezoneSelect from "@/components/common/TimezoneSelect.vue"
 
 const travelStore = useTravelStore()
 const timeZoneStore = useTimeZoneStore()
@@ -11,6 +12,10 @@ const { timeZoneList } = storeToRefs(timeZoneStore)
 function updateDate({ startDate, endDate }) {
   travelStore.addStartDate = startDate
   travelStore.addEndDate = endDate
+}
+
+function changeTimeZone(timezone) {
+  travelStore.addTravelTimeZone = timezone
 }
 
 async function createTrip() {
@@ -35,9 +40,14 @@ async function createTrip() {
     </div>
     <div>
       <label for="timezone">旅程時區</label>
-      <select name="timezone" id="timezone" v-model="travelStore.addTravelTimeZone">
-        <option v-for="timezone in timeZoneList" :value="timezone.name">{{ timezone.name  }}({{ timezone.utc_offset.hours || 0 }})</option>
-      </select>
+      <TimezoneSelect @changeTimeZone="changeTimeZone"></TimezoneSelect>
+      <!-- <select name="timezone" id="timezone" v-model="travelStore.addTravelTimeZone">
+        <option
+          v-for="timezone in timeZoneList"
+          :value="timezone.name"
+          :key="timezone.name"
+        >{{ timezone.name }}({{ timezone.utc_offset.hours || 0 }})</option>
+      </select> -->
     </div>
     <pre v-if="travelStore.dateOffset">{{ travelStore.dateOffset.startDate }}</pre>
     <pre v-if="travelStore.dateOffset">{{ travelStore.dateOffset.endDate }}</pre>
