@@ -22,7 +22,7 @@ export const useLocationStore = defineStore({
         const targetIndex = newSuggestList.findIndex(suggest => {
           return location.lat === suggest.position.lat && location.lng === suggest.position.lng
         })
-        console.log("targetIndex", targetIndex);
+        
         if (targetIndex >= 0) {
           newSuggestList[targetIndex].hasExisted = true
           newSuggestList[targetIndex].id = location.id

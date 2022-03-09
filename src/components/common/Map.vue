@@ -18,7 +18,7 @@ const props = defineProps({
     default: () => ([])
   },
   focusSuggestId: {
-    type: String,
+    type: [String, Number],
     default: "",
   },
 })
@@ -75,6 +75,9 @@ const mapControl = {
   center: [23.97565, 120.97388],
   zoom: 8,
   zoomControl: true,
+  zoomAnimation: false,
+  fadeAnimation: true,
+  markerZoomAnimation: true
 }
 
 // 初始化地圖
@@ -153,6 +156,11 @@ function locationMarkerHandler() {
   let group = []
   const greenIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
   });
   props.locationList.forEach(location => {
     // const marker = L.marker([location.lat, location.lng])
@@ -239,7 +247,7 @@ function createPopupContent({ locationId, name, address, categories, addBtn }) {
       emit("removeLocationHandler", locationId)
     });
   }
-  
+
   return container;
 }
 

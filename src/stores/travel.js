@@ -152,8 +152,6 @@ export const useTravelStore = defineStore({
       }
     },
     async createTripHandler() {
-      // for test
-
       const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`;
       const payload = {
         name: this.addTravelName,

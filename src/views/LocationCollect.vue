@@ -16,8 +16,11 @@ function focusSuggestHandler(suggest) {
   locationStore.focusSuggestHandler(suggest)
 }
 
-function collectLocationHandler() {
-  locationStore.collectLocationHandler()
+async function collectLocationHandler() {
+  const result = await locationStore.collectLocationHandler()
+  if (result) {
+    locationStore.getAllLocationHandler()
+  }
 }
 
 async function removeLocationHandler(locationId) {
