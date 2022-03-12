@@ -3,14 +3,14 @@ import Datepicker from 'vue3-date-time-picker';
 import 'vue3-date-time-picker/dist/main.css'
 import { ref, onMounted, watch } from "vue"
 import { storeToRefs } from 'pinia'
-import { useTimeZoneStore } from "@/stores/common/timezone"
+import { useTimeStore } from "@/stores/common/time"
 import { useTravelStore } from "@/stores/travel"
 
 const date = ref()
 const emit = defineEmits(["updateDate", "addTravelTimeZone"])
-const timeZoneStore = useTimeZoneStore()
+const timeStore = useTimeStore()
 const travelStore = useTravelStore()
-const { timeZoneList } = storeToRefs(timeZoneStore)
+const { timeZoneList } = storeToRefs(timeStore)
 const { addTravelTimeZone, dateOffset } = storeToRefs(travelStore)
 
 watch(date, val => {

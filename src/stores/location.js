@@ -6,13 +6,14 @@ export const useLocationStore = defineStore({
     searchText: "",
     suggestList: [],
     locationList: [],
-    focusSuggestId: "",
     nowLocation: {
+      id: "",
       name: "",
       address: "",
       category: "",
       lat: null,
       lng: null,
+      is_collect: "",
     },
   }),
   getters: {
@@ -72,11 +73,12 @@ export const useLocationStore = defineStore({
       }
     },
     focusSuggestHandler(suggest) {
-      this.focusSuggestId = suggest.id
+      this.nowLocation.id = suggest.id
       this.nowLocation.name = suggest.title
       this.nowLocation.address = suggest.address.label
       this.nowLocation.lat = suggest.position.lat
       this.nowLocation.lng = suggest.position.lng
+      this.nowLocation.is_collect = "0"
       const categories = []
       if (suggest.categories) {
         suggest.categories.forEach(category => {
@@ -84,6 +86,15 @@ export const useLocationStore = defineStore({
         })
       }
       this.nowLocation.category = categories.join()
+    },
+    focusLocationHandler(location) {
+      this.nowLocation.id = location.id
+      this.nowLocation.name = location.name
+      this.nowLocation.address = location.address
+      this.nowLocation.lat = location.lat
+      this.nowLocation.lng = location.lng
+      this.nowLocation.category = location.category
+      this.nowLocation.is_collect = location.is_collect
     },
     async removeLocationHandler(locationId) {
       // for test

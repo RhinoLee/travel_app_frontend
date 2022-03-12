@@ -1,13 +1,13 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { useTimeZoneStore } from "@/stores/common/timezone"
+import { useTimeStore } from "@/stores/common/time"
 import { ref } from '@vue/reactivity'
 import { watch } from '@vue/runtime-core'
 import { defineEmits } from 'vue'
 
 const emit = defineEmits(["changeTimeZone"])
-const timeZoneStore = useTimeZoneStore()
-const { timeZoneList } = storeToRefs(timeZoneStore)
+const timeStore = useTimeStore()
+const { timeZoneList } = storeToRefs(timeStore)
 const timeZone = ref("Asia/Taipei")
 
 watch(timeZone, val => {

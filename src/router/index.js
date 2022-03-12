@@ -23,6 +23,11 @@ const router = createRouter({
       name: 'LocationCollect',
       component: () => import('../views/LocationCollect.vue')
     },
+    {
+      path: '/addDayTrip',
+      name: 'AddDayTrip',
+      component: () => import('../views/AddDayTrip.vue')
+    },
   ]
 })
 

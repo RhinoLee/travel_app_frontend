@@ -1,12 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { onMounted } from "vue"
-import { useTimeZoneStore } from "@/stores/common/timezone"
+import { useTimeStore } from "@/stores/common/time"
 
-const timeZoneStore = useTimeZoneStore()
+const timeStore = useTimeStore()
 
 onMounted(() => {
-  timeZoneStore.getTimeZoneListHandler()
+  timeStore.getTimeZoneListHandler()
 })
 </script>
 

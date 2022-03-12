@@ -1,14 +1,14 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useTravelStore } from "@/stores/travel"
-import { useTimeZoneStore } from "@/stores/common/timezone"
+import { useTimeStore } from "@/stores/common/time"
 import DatePickerWrap from "@/components/common/DatePickerWrap.vue"
 import TimezoneSelect from "@/components/common/TimezoneSelect.vue"
 import { useTimeTransfer } from "@/tools/time-transfer"
 
 const travelStore = useTravelStore()
-const timeZoneStore = useTimeZoneStore()
-const { timeZoneList } = storeToRefs(timeZoneStore)
+const timeStore = useTimeStore()
+const { timeZoneList } = storeToRefs(timeStore)
 const { addTravelTimeZone } = storeToRefs(travelStore)
 
 function updateDate({ startDate, endDate }) {

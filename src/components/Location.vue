@@ -1,12 +1,21 @@
 <script setup>
 import Map from "@/components/common/Map.vue"
 import { onMounted, reactive, ref } from "@vue/runtime-core"
+import { defineProps, defineEmits } from "vue"
 import axios from "axios"
 import { useLocationStore } from "@/stores/location"
 import { storeToRefs } from "pinia"
 
+const emit = defineEmits(["addToTripHandler"])
+const props = defineProps({
+  addToTrip: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const locationStore = useLocationStore()
-const { searchText, suggestList, focusSuggestId, locationList, suggestWithoutCollect } = storeToRefs(locationStore)
+const { searchText, suggestList, nowLocation, locationList, suggestWithoutCollect } = storeToRefs(locationStore)
 
 async function getSuggestLocation() {
   locationStore.getSuggestLocation()
@@ -14,6 +23,14 @@ async function getSuggestLocation() {
 
 function focusSuggestHandler(suggest) {
   locationStore.focusSuggestHandler(suggest)
+}
+
+function focusLocationHandler(location) {
+  locationStore.focusLocationHandler(location)
+}
+
+function addToTripHandler() {
+  emit("addToTripHandler")
 }
 
 async function collectLocationHandler() {
@@ -40,11 +57,14 @@ onMounted(() => {
   <div class="container">
     <Map
       @focusSuggestHandler="focusSuggestHandler"
+      @focusLocationHandler="focusLocationHandler"
       @collectLocationHandler="collectLocationHandler"
       @removeLocationHandler="removeLocationHandler"
-      :focusSuggestId="focusSuggestId"
+      @addToTripHandler="addToTripHandler"
+      :focusMarkId="nowLocation.id"
       :suggestList="suggestWithoutCollect"
       :locationList="locationList"
+      :addToTrip="props.addToTrip"
     ></Map>
     <div class="input-group">
       <input

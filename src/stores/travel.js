@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { useTimeZoneStore } from "@/stores/common/timezone";
+import { useTimeStore } from "@/stores/common/time";
 import axios from "axios";
 export const useTravelStore = defineStore({
   id: "travel",
@@ -102,7 +102,7 @@ export const useTravelStore = defineStore({
     },
     // dateOffset: (state) => {
     //   if (!state.addStartDate || !state.addEndDate) return
-    //   const timeZoneStore = useTimeZoneStore()
+    //   const timeZoneStore = useTimeStore()
     //   const target = timeZoneStore.timeZoneList.filter(timeZone => timeZone.name === state.addTravelTimeZone)[0]
     //   if (!target) return 
     //   const offset = target.utc_offset.hours || 0

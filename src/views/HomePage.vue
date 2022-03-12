@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted } from "vue"
-import { useTimeZoneStore } from "@/stores/common/timezone"
+import { useTimeStore } from "@/stores/common/time"
 import TravelList from "../components/TravelList.vue";
 
-const timeZoneStore = useTimeZoneStore()
+const timeStore = useTimeStore()
 
 onMounted(() => {
-  if (timeZoneStore.timeZoneList.length > 0) return
-  timeZoneStore.getTimeZoneListHandler()
+  if (timeStore.timeZoneList.length > 0) return
+  timeStore.getTimeZoneListHandler()
 })
 </script>
 
