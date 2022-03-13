@@ -16,33 +16,51 @@ export const useDayTravelStore = defineStore({
       const locationStore = useLocationStore()
       const nowLocation = JSON.parse(JSON.stringify(locationStore.nowLocation))
       const tripLength = this.dayTrip.length
-      let defaultStartHours = 8
-      let defaultMin = 0
+      const defaultStartHours = 8
+      const defaultMin = 0
 
-      nowLocation.startHours = defaultStartHours + tripLength
-      nowLocation.startMin = defaultMin
-      nowLocation.endHours = defaultStartHours + tripLength + 1
-      nowLocation.endMin = defaultMin
+      nowLocation.startHours = (defaultStartHours + tripLength).toString(10).padStart(2, "0")
+      nowLocation.startMin = defaultMin.toString(10).padStart(2, "0")
+      nowLocation.endHours = (defaultStartHours + tripLength + 1).toString(10).padStart(2, "0")
+      nowLocation.endMin = defaultMin.toString(10).padStart(2, "0")
+      nowLocation.startTime = nowLocation.startHours + ":" + nowLocation.startMin
+      nowLocation.endTime = nowLocation.endHours + ":" + nowLocation.endMin
 
       this.dayTrip.push(nowLocation)
     },
-    createDayTripHandler() {
-      const payload = {
-        name: this.dayTripName,
-        tripList: this.dayTrip
-      }
-      console.log("createDayTripHandler", payload);
-      // const api = `${import.meta.env.VITE_BACKEND_HOST}/dayTripCollect`;
-      // try {
-      //   const result = await axios.post(api, this.dayTrip);
-      //   console.log(result);
-      //   if (result.data.success) {
+    async createDayTripHandler() {
+      const addDayTripApi = `${import.meta.env.VITE_BACKEND_HOST}/daytrip_collect`;
+      const addDayTripResult = await axios.post(addDayTripApi, { name: this.dayTripName })
 
-      //   }
-      // } catch (err) {
-      //   console.log(err);
-      //   return err
-      // }
+      if (addDayTripResult.data.success && this.dayTrip.length > 0) {
+        console.log("prepare add location to daytrip");
+        const addTripApi = `${import.meta.env.VITE_BACKEND_HOST}/single_trip_collect`;
+        const payload = {
+          dayTripId: addDayTripResult.data.dayTrip.id,
+          tripList: this.dayTrip,
+        }
+
+        try {
+          const addTripResult = await axios.post(addTripApi, payload)
+          console.log("addTripResult", addTripResult);
+        } catch(err) {
+          console.log("addTripResult err", err);
+        }
+        
+      }
+    },
+    async getAllCollectHandler() {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/daytrip_collect`;
+      try {
+        const result = await axios.get(api);
+        console.log(result);
+        if (result.data.success) {
+
+        }
+      } catch (err) {
+        console.log(err);
+        return err
+      }
     }
   },
 });

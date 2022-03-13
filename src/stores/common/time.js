@@ -9,8 +9,7 @@ export const useTimeStore = defineStore({
     hoursList: () => {
       const hoursList = []
       for(let i = 0; i <= 23; i++) {
-        hoursList.push(i)
-        // hoursList.push( i < 10 ? "0" + i : i.toString(10))
+        hoursList.push(i.toString(10).padStart(2, "0"))
       }
 
       return hoursList
@@ -18,8 +17,7 @@ export const useTimeStore = defineStore({
     minList: () => {
       const minList = []
       for(let i = 0; i <= 59; i++) {
-        minList.push(i)
-        // minList.push( i < 10 ? "0" + i : i.toString(10))
+        minList.push(i.toString(10).padStart(2, "0"))
       }
 
       return minList

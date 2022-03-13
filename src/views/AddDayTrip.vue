@@ -4,6 +4,7 @@ import { useDayTravelStore } from "@/stores/dayTravel"
 import Location from "@/components/Location.vue"
 import AddDayTripForm from "@/components/AddDayTripForm.vue"
 import TimezoneSelect from "@/components/common/TimezoneSelect.vue"
+import { onMounted } from '@vue/runtime-core'
 
 const dayTravelStore = useDayTravelStore()
 const { dayTrip, dayTripName } = storeToRefs(dayTravelStore)
@@ -16,6 +17,9 @@ function addToTripHandler() {
   dayTravelStore.addToTripHandler()
 }
 
+onMounted(() => {
+  dayTravelStore.getAllCollectHandler()
+})
 
 </script>
 

@@ -63,6 +63,7 @@ export const useLocationStore = defineStore({
     },
     async collectLocationHandler() {
       const api = `${import.meta.env.VITE_BACKEND_HOST}/location`;
+      this.nowLocation.is_collect = "1"
       const payload = this.nowLocation
       try {
         const result = await axios.post(api, payload);
