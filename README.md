@@ -34,3 +34,7 @@ npm run build
 - 可收藏地點
 - 可預先設定一天行程，將收藏 or 新的地點加入行程
 - 新增三天二夜旅程 → 編輯第一天 → 直接指定之前設定好的一日行程
+
+### 初期規劃
+<img width="1146" alt="初期規劃_前端" src="https://user-images.githubusercontent.com/69729674/158379705-7ce66e8d-ab88-4198-b788-f491bc3e05ad.png">
+
