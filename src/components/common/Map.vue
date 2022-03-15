@@ -27,7 +27,7 @@ const props = defineProps({
   }
 })
 const travelMap = reactive({ map: {} })
-const markerGroup = reactive({ suggestMarkerGroup: {}, locationMarkerGroup: {} })
+const markerGroup = reactive({ suggestMarkerGroup: {}, locationMarkerGroup: {}, tripMarkerGroup: {} })
 const focusMarkId = toRef(props, 'focusMarkId')
 
 watch(() => props.suggestList, val => {
@@ -101,22 +101,10 @@ function mapInit() {
   osmLayer.addTo(travelMap.map); // 預設圖資
 }
 
-// 地圖插點
-// function markHandler() {
-//   if (!props.location || props.location.length === 0) return
-//   props.location.forEach(location => {
-//     const marker = L.marker(location.latlng)
-//     const popupContent = popupHandler({ name: location.name, cate: location.cate })
-//     marker.markerId = location.id
-//     marker.bindPopup(popupContent)
-//     marker.addTo(travelMap.map)
-//   })
-// }
-
 // 建議點位插點
-
 function suggestMarkHandler() {
-  removeSuggestMarker()
+  // removeSuggestMarker()
+  removeMarkerHandler("suggestMarkerGroup")
   if (!props.suggestList || props.suggestList.length === 0) return
   let group = []
   // 待實作： 跟 locationList 比對，座標不一樣才插點
@@ -156,7 +144,8 @@ function suggestMarkHandler() {
 
 // 收藏點位插點
 function locationMarkerHandler() {
-  removeLocationMarker()
+  // removeLocationMarker()
+  removeMarkerHandler("locationMarkerGroup")
   if (!props.locationList || props.locationList.length === 0) return
   let group = []
   const greenIcon = new L.Icon({
@@ -191,6 +180,11 @@ function locationMarkerHandler() {
 
   markerGroup.locationMarkerGroup = L.featureGroup(group)
   markerGroup.locationMarkerGroup.addTo(travelMap.map)
+}
+
+// 行程點位插點
+function tripMarkerHandler() {
+
 }
 
 // 地圖點位 popup 內容設置
@@ -292,15 +286,19 @@ function focusMarkerHandler(markerId) {
   }
 }
 
-// 移除所有建議點位
-function removeSuggestMarker() {
-  travelMap.map.removeLayer(markerGroup.suggestMarkerGroup)
+function removeMarkerHandler(markGroupType) {
+  travelMap.map.removeLayer(markerGroup[markGroupType])
 }
 
-// 移除所有收藏點位
-function removeLocationMarker() {
-  travelMap.map.removeLayer(markerGroup.locationMarkerGroup)
-}
+// // 移除所有建議點位
+// function removeSuggestMarker() {
+//   travelMap.map.removeLayer(markerGroup.suggestMarkerGroup)
+// }
+
+// // 移除所有收藏點位
+// function removeLocationMarker() {
+//   travelMap.map.removeLayer(markerGroup.locationMarkerGroup)
+// }
 
 
 onMounted(() => {

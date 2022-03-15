@@ -8,6 +8,8 @@ export const useDayTravelStore = defineStore({
     addEndTime: "",
     dayTripName: "",
     dayTrip: [],
+    collectList: [],
+    nowCollectId: null,
   }),
   getters: {
   },
@@ -43,10 +45,10 @@ export const useDayTravelStore = defineStore({
         try {
           const addTripResult = await axios.post(addTripApi, payload)
           console.log("addTripResult", addTripResult);
-        } catch(err) {
+        } catch (err) {
           console.log("addTripResult err", err);
         }
-        
+
       }
     },
     async getAllCollectHandler() {
@@ -55,7 +57,20 @@ export const useDayTravelStore = defineStore({
         const result = await axios.get(api);
         console.log(result);
         if (result.data.success) {
-
+          this.collectList = result.data.collectList
+        }
+      } catch (err) {
+        console.log(err);
+        this.collectList = []
+        return err
+      }
+    },
+    async getCollectDetail(collectId) {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/daytrip_collect/${this.nowCollectId}`
+      try {
+        const result = await axios.get(api);
+        console.log(result);
+        if (result.data.success) {
         }
       } catch (err) {
         console.log(err);
