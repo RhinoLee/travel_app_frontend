@@ -1,31 +1,35 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { useTravelStore } from "@/stores/travel"
+import { useTravelPlansStore } from "@/stores/travel/travelPlans"
 import { useTimeStore } from "@/stores/common/time"
 import DatePickerWrap from "@/components/common/DatePickerWrap.vue"
 import TimezoneSelect from "@/components/common/TimezoneSelect.vue"
 import { useTimeTransfer } from "@/tools/time-transfer"
 
-const travelStore = useTravelStore()
+const travelPlansStore = useTravelPlansStore()
 const timeStore = useTimeStore()
 const { timeZoneList } = storeToRefs(timeStore)
-const { addTravelTimeZone } = storeToRefs(travelStore)
+const { addTravelTimeZone } = storeToRefs(travelPlansStore)
+const { getTimeZoneListHandler } = timeStore
 
-function updateDate({ startDate, endDate }) {
+async function updateDate({ startDate, endDate }) {
+  if (timeZoneList.value.length === 0) {
+    await getTimeZoneListHandler()
+  }
   const { startDateResult, endDateResult } = useTimeTransfer({ startDate, endDate, nowTimeZone:addTravelTimeZone,  timeZoneList })
-  travelStore.addStartDate = startDateResult
-  travelStore.addEndDate = endDateResult
+  travelPlansStore.addStartDate = startDateResult
+  travelPlansStore.addEndDate = endDateResult
 }
 
 function changeTimeZone(timezone) {
-  travelStore.addTravelTimeZone = timezone
+  travelPlansStore.addTravelTimeZone = timezone
 }
 
 async function createTrip() {
-  const result = await travelStore.createTripHandler()
-  travelStore.addTravelName = ""
+  const result = await travelPlansStore.createTravelPlanHandler()
+  travelPlansStore.addTravelName = ""
   if (result) {
-    travelStore.getTravelListHandler()
+    travelPlansStore.getTravelPlansListHandler()
   }
 }
 
@@ -35,7 +39,7 @@ async function createTrip() {
   <div class="create">
     <div>
       <label for="tripName">旅程名稱：</label>
-      <input v-model="travelStore.addTravelName" type="text" />
+      <input v-model="travelPlansStore.addTravelName" type="text" />
     </div>
     <div>
       <label for="tripDate">當地旅程時間：</label>
@@ -44,7 +48,7 @@ async function createTrip() {
     <div>
       <label for="timezone">旅程時區</label>
       <TimezoneSelect @changeTimeZone="changeTimeZone"></TimezoneSelect>
-      <!-- <select name="timezone" id="timezone" v-model="travelStore.addTravelTimeZone">
+      <!-- <select name="timezone" id="timezone" v-model="travelPlansStore.addTravelTimeZone">
         <option
           v-for="timezone in timeZoneList"
           :value="timezone.name"
@@ -52,8 +56,8 @@ async function createTrip() {
         >{{ timezone.name }}({{ timezone.utc_offset.hours || 0 }})</option>
       </select> -->
     </div>
-    <pre v-if="travelStore.addStartDate">{{ travelStore.addStartDate }}</pre>
-    <pre v-if="travelStore.addEndDate">{{ travelStore.addEndDate }}</pre>
+    <pre v-if="travelPlansStore.addStartDate">{{ travelPlansStore.addStartDate }}</pre>
+    <pre v-if="travelPlansStore.addEndDate">{{ travelPlansStore.addEndDate }}</pre>
     <button @click="createTrip">新增旅程</button>
   </div>
 </template>

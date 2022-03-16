@@ -1,23 +1,10 @@
 import { defineStore } from "pinia";
 import { useTimeStore } from "@/stores/common/time";
 import axios from "axios";
-export const useTravelStore = defineStore({
-  id: "travel",
+export const useTravelPlansStore = defineStore({
+  id: "travelPlans",
   state: () => ({
-    travelList: [
-      {
-        id: 1,
-        title: "Travel1",
-        start_time: "2022/01/01 8:00",
-        end_time: "2022/01/06 20:00",
-      },
-      {
-        id: 2,
-        title: "Travel2",
-        start_time: "2022/02/01 9:00",
-        end_time: "2022/02/03 21:00",
-      },
-    ],
+    travelPlanList: [],
     travel: {
       id: 1,
       title: "Travel1",
@@ -84,8 +71,8 @@ export const useTravelStore = defineStore({
         },
       ],
     },
-    nowTravel: {},
-    nowTravelId: null,
+    nowTravelPlan: {},
+    nowTravelPlanId: null,
     nowTripId: null,
     addTravelName: "test",
     addTravelTimeZone: "",
@@ -120,15 +107,16 @@ export const useTravelStore = defineStore({
     // },
   },
   actions: {
-    async getTravelListHandler() {
-      console.log("getTravelListHandler");
-      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`;
+    async getTravelPlansListHandler() {
+      console.log("getTravelPlansListHandler");
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel_plan`;
       try {
         const result = await axios.get(api);
-        if (result.data.success && Array.isArray(result.data.travelList)) {
+        console.log("getTravelPlansListHandler result", result);
+        if (result.data.success && Array.isArray(result.data.travelPlanList)) {
           // 更新列表
           console.log("取得列表", result);
-          this.travelList = result.data.travelList
+          this.travelPlanList = result.data.travelPlanList
           return result
         }
       } catch (err) {
@@ -136,14 +124,14 @@ export const useTravelStore = defineStore({
         return err
       }
     },
-    async getTravelHandler() {
-      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel/${this.nowTravelId}`;
+    async getTravelPlanHandler() {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel_plan/${this.nowTravelPlanId}`;
       try {
         const result = await axios.get(api);
         if (result.data.success && result.data.travel) {
           // 更新列表
           console.log("取得列表", result);
-          this.nowTravel = result.data.travel
+          this.nowTravelPlan = result.data.travel
           return result
         }
       } catch (err) {
@@ -151,8 +139,8 @@ export const useTravelStore = defineStore({
         return err
       }
     },
-    async createTripHandler() {
-      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`;
+    async createTravelPlanHandler() {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel_plan`;
       const payload = {
         name: this.addTravelName,
         timezone: this.addTravelTimeZone,
@@ -170,12 +158,11 @@ export const useTravelStore = defineStore({
       }
     },
 
-    async deleteTravelHandler(travelId) {
-      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel`
-      const payload = { travelId }
+    async deleteTravelPlanHandler(planId) {
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel_plan`
+      const payload = { planId }
       try {
-        const result = await axios.delete(api, { data: payload }) 
-        console.log("delete travel list", result);
+        const result = await axios.delete(api, { data: payload })
         return result
       } catch(err) {
         return err

@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import { useLocationStore } from "@/stores/location";
-export const useDayTravelStore = defineStore({
-  id: "dayTravel",
+import { useLocationStore } from "@/stores/travel/location";
+export const useTravelSampleStore = defineStore({
+  id: "travelSample",
   state: () => ({
     addStartTime: "",
     addEndTime: "",
-    dayTripName: "",
-    dayTrip: [],
+    travelSampleName: "",
+    travelSample: [],
     collectList: [],
     nowCollectId: null,
   }),
@@ -17,7 +17,7 @@ export const useDayTravelStore = defineStore({
     addToTripHandler() {
       const locationStore = useLocationStore()
       const nowLocation = JSON.parse(JSON.stringify(locationStore.nowLocation))
-      const tripLength = this.dayTrip.length
+      const tripLength = this.travelSample.length
       const defaultStartHours = 8
       const defaultMin = 0
 
@@ -28,31 +28,31 @@ export const useDayTravelStore = defineStore({
       nowLocation.startTime = nowLocation.startHours + ":" + nowLocation.startMin
       nowLocation.endTime = nowLocation.endHours + ":" + nowLocation.endMin
 
-      this.dayTrip.push(nowLocation)
+      this.travelSample.push(nowLocation)
     },
     async createDayTripHandler() {
-      const addDayTripApi = `${import.meta.env.VITE_BACKEND_HOST}/daytrip_collect`;
-      const addDayTripResult = await axios.post(addDayTripApi, { name: this.dayTripName })
+      const addSampleApi = `${import.meta.env.VITE_BACKEND_HOST}/travel_sample`;
+      const addSampleResult = await axios.post(addSampleApi, { name: this.travelSampleName })
 
-      if (addDayTripResult.data.success && this.dayTrip.length > 0) {
+      if (addSampleResult.data.success && this.travelSample.length > 0) {
         console.log("prepare add location to daytrip");
-        const addTripApi = `${import.meta.env.VITE_BACKEND_HOST}/single_trip_collect`;
+        const addSampleLocatioApi = `${import.meta.env.VITE_BACKEND_HOST}/location_trip_collect`;
         const payload = {
-          dayTripId: addDayTripResult.data.dayTrip.id,
-          tripList: this.dayTrip,
+          dayTripId: addSampleResult.data.travelSample.id,
+          tripList: this.travelSample,
         }
 
         try {
-          const addTripResult = await axios.post(addTripApi, payload)
-          console.log("addTripResult", addTripResult);
+          const addSampleLocationResult = await axios.post(addSampleLocatioApi, payload)
+          console.log("addSampleLocationResult", addSampleLocationResult);
         } catch (err) {
-          console.log("addTripResult err", err);
+          console.log("addSampleLocationResult err", err);
         }
 
       }
     },
     async getAllCollectHandler() {
-      const api = `${import.meta.env.VITE_BACKEND_HOST}/daytrip_collect`;
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel_sample`;
       try {
         const result = await axios.get(api);
         console.log(result);
@@ -66,7 +66,7 @@ export const useDayTravelStore = defineStore({
       }
     },
     async getCollectDetail(collectId) {
-      const api = `${import.meta.env.VITE_BACKEND_HOST}/daytrip_collect/${this.nowCollectId}`
+      const api = `${import.meta.env.VITE_BACKEND_HOST}/travel_sample/${this.nowCollectId}`
       try {
         const result = await axios.get(api);
         console.log(result);

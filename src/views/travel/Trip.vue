@@ -1,16 +1,16 @@
 <script setup>
 import { onMounted } from "vue"
 import { useRoute } from "vue-router"
-import { useTravelStore } from '@/stores/travel'
+import { useTravelPlansStore } from '@/stores/travel/travelPlans'
 import { storeToRefs } from 'pinia'
 import Map from "@/components/common/Map.vue"
 
 const route = useRoute()
-const store = useTravelStore()
-const { trip } = storeToRefs(store)
+const travelPlansStore = useTravelPlansStore()
+const { trip } = storeToRefs(travelPlansStore)
 
 onMounted(() => {
-  store.nowTripId = Number(route.params.tripId)
+  travelPlansStore.nowTripId = Number(route.params.tripId)
 })
 
 </script>

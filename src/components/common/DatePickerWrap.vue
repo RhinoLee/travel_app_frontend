@@ -4,25 +4,25 @@ import 'vue3-date-time-picker/dist/main.css'
 import { ref, onMounted, watch } from "vue"
 import { storeToRefs } from 'pinia'
 import { useTimeStore } from "@/stores/common/time"
-import { useTravelStore } from "@/stores/travel"
+import { useTravelPlansStore } from "@/stores/travel/travelPlans"
 
 const date = ref()
 const emit = defineEmits(["updateDate", "addTravelTimeZone"])
 const timeStore = useTimeStore()
-const travelStore = useTravelStore()
+const travelPlansStore = useTravelPlansStore()
 const { timeZoneList } = storeToRefs(timeStore)
-const { addTravelTimeZone, dateOffset } = storeToRefs(travelStore)
+const { addTravelTimeZone, dateOffset } = storeToRefs(travelPlansStore)
 
 watch(date, val => {
   if (!val) return
   const dateRange = {
-    startDate: date.value[0],
-    endDate: date.value[1]
+    startDate: val[0],
+    endDate: val[1]
   }
   emit("updateDate", dateRange)
 }, { immediate: true })
 
-onMounted(() => {
+onMounted(async () => {
   const startDate = new Date();
   const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
   date.value = [startDate, endDate];

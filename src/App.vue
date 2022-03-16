@@ -5,8 +5,8 @@ import { useTimeStore } from "@/stores/common/time"
 
 const timeStore = useTimeStore()
 
-onMounted(() => {
-  timeStore.getTimeZoneListHandler()
+onMounted(async () => {
+  await timeStore.getTimeZoneListHandler()
 })
 </script>
 

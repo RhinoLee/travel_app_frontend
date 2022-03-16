@@ -3,7 +3,7 @@ import Map from "@/components/common/Map.vue"
 import { onMounted, reactive, ref } from "@vue/runtime-core"
 import { defineProps, defineEmits } from "vue"
 import axios from "axios"
-import { useLocationStore } from "@/stores/location"
+import { useLocationStore } from "@/stores/travel/location"
 import { storeToRefs } from "pinia"
 
 const emit = defineEmits(["addToTripHandler"])

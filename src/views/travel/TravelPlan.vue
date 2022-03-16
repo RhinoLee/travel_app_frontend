@@ -1,19 +1,19 @@
 <script setup>
 import { onMounted } from "vue"
 import { storeToRefs } from 'pinia'
-import { useTravelStore } from '@/stores/travel'
+import { useTravelPlansStore } from '@/stores/travel/travelPlans'
 import { useRouter, useRoute } from "vue-router"
 
 const router = useRouter()
 const route = useRoute()
-const store = useTravelStore()
+const store = useTravelPlansStore()
 
 const travel = store.travel
 const trips = travel.trips
-const { nowTravel } = storeToRefs(store)
+const { nowTravelPlan } = storeToRefs(store)
 
-const travelId = route.params.travelId
-store.nowTravelId = travelId
+const planId = route.params.planId
+store.nowTravelPlanId = planId
 
 
 const gotoTrip = (tripId) => {
@@ -25,7 +25,7 @@ const gotoTrip = (tripId) => {
 }
 
 onMounted(() => {
-  store.getTravelHandler()
+  store.getTravelPlanHandler()
 })
 
 </script>
@@ -33,10 +33,10 @@ onMounted(() => {
   <h1>Trips 每日行程列表</h1>
   <div>
     <h2>總旅程資訊</h2>
-    <p>名稱：{{ nowTravel.name }}</p>
-    <p>目的地時區：{{ nowTravel.timezone }}</p>
-    <p>開始日期：{{ nowTravel.start_date }}</p>
-    <p>結束日期：{{ nowTravel.end_date }}</p>
+    <p>名稱：{{ nowTravelPlan.name }}</p>
+    <p>目的地時區：{{ nowTravelPlan.timezone }}</p>
+    <p>開始日期：{{ nowTravelPlan.start_date }}</p>
+    <p>結束日期：{{ nowTravelPlan.end_date }}</p>
   </div>
   <!-- <div class="trip" v-for="trip in trips" :key="trip.id">
     <a href="javascript:;" @click="gotoTrip(trip.id)">

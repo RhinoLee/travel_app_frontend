@@ -2,15 +2,15 @@
 import { storeToRefs } from "pinia";
 import Lightbox from "@/components/common/Lightbox.vue"
 import { useTimeStore } from "@/stores/common/time"
-import { useDayTravelStore } from "@/stores/dayTravel"
+import { useTravelSampleStore } from "@/stores/travel/travelSample"
 
 const timeStore = useTimeStore()
-const dayTravelStore = useDayTravelStore()
+const travelSampleStore = useTravelSampleStore()
 const { hoursList, minList } = storeToRefs(timeStore)
-const { dayTrip } = storeToRefs(dayTravelStore)
+const { travelSample } = storeToRefs(travelSampleStore)
 
 function createDayTripHandler() {
-  dayTravelStore.createDayTripHandler()
+  travelSampleStore.createDayTripHandler()
 }
 
 </script>
@@ -20,7 +20,7 @@ function createDayTripHandler() {
       <h3>新增行程</h3>
     </template>
     <template v-slot:body>
-      <form v-for="location in dayTrip" :key="location.id">
+      <form v-for="location in travelSample" :key="location.id">
         <div class="formGroup">
           <label for="name">地點名稱：</label>
           <span>{{ location.name }}</span>

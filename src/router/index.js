@@ -9,29 +9,29 @@ const router = createRouter({
       component: () => import('../views/HomePage.vue')
     },
     {
-      path: "/travel/:travelId",
-      name: "Trips",
-      component: () => import('../views/Trips.vue'),
+      path: "/travel_plans/:planId",
+      name: "TravelPlan",
+      component: () => import('../views/travel/TravelPlan.vue'),
     },
     {
       path: '/trips/:tripId',
       name: 'Trip',
-      component: () => import('../views/Trip.vue')
+      component: () => import('../views/travel/Trip.vue')
     },
     {
-      path: '/locationCollect',
+      path: '/location_collect',
       name: 'LocationCollect',
-      component: () => import('../views/LocationCollect.vue')
+      component: () => import('../views/travel/LocationCollect.vue')
     },
     {
-      path: '/addDayTrip',
-      name: 'AddDayTrip',
-      component: () => import('../views/AddDayTrip.vue')
+      path: '/travel_sample_create',
+      name: 'TravelSampleCreate',
+      component: () => import('../views/travel/TravelSampleCreate.vue')
     },
     {
-      path: '/dayTripCollect',
-      name: 'DayTripCollect',
-      component: () => import('../views/DayTripCollect.vue')
+      path: '/travel_sample_list',
+      name: 'TravelSampleList',
+      component: () => import('../views/travel/TravelSampleList.vue')
     },
   ]
 })

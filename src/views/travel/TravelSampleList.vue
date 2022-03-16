@@ -1,19 +1,19 @@
 <script setup>
-import { useDayTravelStore } from "@/stores/dayTravel"
+import { useTravelSampleStore } from "@/stores/travel/travelSample"
 import { onMounted } from "@vue/runtime-core"
 import { storeToRefs } from "pinia"
 import Map from "@/components/common/Map.vue"
 
-const dayTravelStore = useDayTravelStore()
-const { collectList } = storeToRefs(dayTravelStore)
+const travelSampleStore = useTravelSampleStore()
+const { collectList } = storeToRefs(travelSampleStore)
 
 function getCollectDetail(collectId) {
-  dayTravelStore.nowCollectId = collectId
-  dayTravelStore.getCollectDetail(collectId)
+  travelSampleStore.nowCollectId = collectId
+  travelSampleStore.getCollectDetail(collectId)
 }
 
 onMounted(() => {
-  dayTravelStore.getAllCollectHandler()
+  travelSampleStore.getAllCollectHandler()
 })
 
 </script>

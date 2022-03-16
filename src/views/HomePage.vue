@@ -1,16 +1,16 @@
 <script setup>
 import { onMounted } from "vue"
 import { useTimeStore } from "@/stores/common/time"
-import TravelList from "../components/TravelList.vue";
+import TravelPlansList from "../components/travel/TravelPlansList.vue";
 
 const timeStore = useTimeStore()
 
-onMounted(() => {
+onMounted(async() => {
   if (timeStore.timeZoneList.length > 0) return
-  timeStore.getTimeZoneListHandler()
+  await timeStore.getTimeZoneListHandler()
 })
 </script>
 
 <template>
-  <TravelList></TravelList>
+  <TravelPlansList></TravelPlansList>
 </template>

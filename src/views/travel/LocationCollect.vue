@@ -1,5 +1,5 @@
 <script setup>
-import Location from "@/components/Location.vue"
+import Location from "@/components/travel/Location.vue"
 </script>
 
 <template>

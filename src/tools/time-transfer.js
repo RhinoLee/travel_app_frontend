@@ -1,6 +1,7 @@
 import { unref } from "vue"
 export function useTimeTransfer({ startDate, endDate, nowTimeZone, timeZoneList }) {
-  if (!startDate || !endDate) return
+  // if (!startDate || !endDate) return
+  console.log("useTimeTransfer", { startDate, endDate, nowTimeZone, timeZoneList: unref(timeZoneList) });
   const target = unref(timeZoneList).filter(timeZone => timeZone.name === unref(nowTimeZone))[0]
   if (!target) return
   const offset = target.utc_offset.hours || 0
